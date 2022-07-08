@@ -23,9 +23,9 @@ export function createApp() {
 			for (let key in valutes) {
 				if (key === value){
 					return valutes[key].Value.toFixed(3);
-				}
-			}
-		}
+				};
+			};
+		};
 
 		//Рассчитваем кросс курс по отношению к рублю
 		function calcCrossCourse(value) {
@@ -34,7 +34,7 @@ export function createApp() {
 			const crossCourse = (value * firstValute / secondValute).toFixed(2);
 			inputTo.value = crossCourse;
 			return crossCourse;
-		}
+		};
 
 		//Функция расчёта валюты
 		function calcValue() {
@@ -42,16 +42,26 @@ export function createApp() {
 			selectToValue = selectTo.value;
 			value = inputFrom.value;
 			return calcCrossCourse(value);
-		}
+		};
 
-		selectFrom.addEventListener('change', calcValue)
-		selectTo.addEventListener('change', calcValue )
+		//Ставим задержу на отображение value
+		function debounce(func, timeout = 300){
+			let timer;
+			return (...args) => {
+			  clearTimeout(timer);
+			  timer = setTimeout(() => { func.apply(this, args); }, timeout);
+			};
+		  };
 
-		inputFrom.addEventListener('input', function() {
-			value = this.value;
-			calcCrossCourse(value)
-		});
+		function saveInput(){
+			calcCrossCourse(inputFrom.value);
+		};
 
+		const processChange = debounce(() => saveInput());
+
+		selectFrom.addEventListener('change', calcValue);
+		selectTo.addEventListener('change', calcValue);
+		inputFrom.addEventListener('input', processChange);
 
 		//Подключение библиотеки choices
 		const multiDefault = () => {
@@ -63,9 +73,9 @@ export function createApp() {
 				position: 'bottom',
 			  });
 			});
-		  }
+		  };
 		  multiDefault();
 	})();
-  }
+  };
 
 
